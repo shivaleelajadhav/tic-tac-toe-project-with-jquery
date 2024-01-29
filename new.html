@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game</title>
+    <link rel="stylesheet" href="jq.css" />
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="msg-container hide">
+      <p id="msg">Winner</p>
+      <button id="new-btn">New Game</button>
+    </div>
+    <main>
+      <h1>Tic Toc Toe</h1>
+      <div class="container">
+        <div class="game">
+          <button class="box" data-index="1"></button>
+          <button class="box" data-index="2"></button>
+          <button class="box" data-index="3"></button>
+          <button class="box" data-index="4"></button>
+          <button class="box" data-index="5"></button>
+          <button class="box" data-index="6"></button>
+          <button class="box" data-index="7"></button>
+          <button class="box" data-index="8"></button>
+          <button class="box" data-index="9"></button>
+          <div id="gameResult"></div>
+        </div>
+      </div>
+      <!-- out of container -->
+      <!-- <button id="reset-btn">Reset Game</button> -->
+    </main>
+    <script>
+      let currentPlayer = "X";
+      let numPlays = 0;
+      let gameFinished = false;
+      let currentPlays = {
+        X: [],
+        O: [],
+      };
+      const winPatterns = [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9],
+        [1, 4, 7],
+        [2, 5, 8],
+        [3, 6, 9],
+        [1, 5, 9],
+        [3, 5, 7],
+      ];
+
+      $(document).ready(function () {
+        $(".box").on("click", function () {
+          if (!gameFinished) {
+            numPlays++;
+            $(this).text(currentPlayer);
+            currentPlays[currentPlayer].push(
+              parseInt($(this).attr("data-index"))
+            );
+
+            if (isWinner()) {
+              showGameResult("win");
+            }
+            if (!gameFinished && isDraw()) {
+              showGameResult("draw");
+            }
+
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+          }
+        });
+      });
+      function playAgain() {
+        currentPlayer = "X";
+        numPlays = 0;
+        gameFinished = false;
+        currentPlays = {
+          X: [],
+          O: [],
+        };
+        $(".box,#gameResult").text("");
+      }
+
+      function showGameResult(type) {
+        gameFinished = true;
+        if (type === "win") {
+          $("#gameResult").text("Winner is " + currentPlayer);
+        } else {
+          $("#gameResult").text("Draw!");
+        }
+        $("#gameResult").append(
+          '<span id="playAgain" onclick="playAgain()"> Play Again?</span>'
+        );
+      }
+
+      function isDraw() {
+        return numPlays === 9;
+      }
+
+      function isWinner() {
+        if (numPlays < 5) return;
+
+        for (let i = 0; i < winPatterns.length; i++) {
+          let isWinner = true;
+          for (let j = 0; j < winPatterns[i].length; j++) {
+            if ($.inArray(winPatterns[i][j], currentPlays[currentPlayer]) < 0) {
+              isWinner = false;
+              break;
+            }
+          }
+          if (isWinner) return true;
+        }
+        return false;
+      }
+    </script>
+  </body>
+</html>
